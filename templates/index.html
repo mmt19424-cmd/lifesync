@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeSync AI - Emergency Response Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- UI DESIGN SYSTEM CONFIGURATION --- */
+        :root {
+            --primary: #B21E1E;
+            --primary-light: #FFECEC;
+            --primary-dark: #7A1212;
+            --text-dark: #1E1A1A;
+            --text-muted: #665E5E;
+            --bg-light: #FAFAFA;
+            --bg-white: #FFFFFF;
+            --border-color: #EAE5E5;
+            --green-success: #2E7D32;
+            --green-light: #E8F5E9;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --shadow: 0px 10px 30px rgba(178, 30, 30, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION HEADER --- */
+        header {
+            background-color: var(--bg-white);
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            display: block;
+            margin-top: -2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-emergency {
+            background-color: var(--primary);
+            color: var(--bg-white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-emergency:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 15px rgba(178, 30, 30, 0.3);
+        }
+
+        /* --- SCREEN CONTAINER MANAGEMENT --- */
+        .screen-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .app-screen {
+            display: none;
+        }
+
+        .app-screen.active-screen {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- SCREEN 1: HOME PAGE --- */
+        .hero-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .live-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .live-tag::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(0.9); opacity: 1; }
+        }
+
+        .hero-left h2 {
+            font-size: 64px;
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .hero-left h2 span {
+            color: var(--primary);
+        }
+
+        .hero-left p {
+            color: var(--text-muted);
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-main-req {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .btn-main-donor {
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            padding: 18px 36px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .btn-main-req:hover { background: var(--primary-dark); }
+        .btn-main-donor:hover { background: var(--bg-light); border-color: var(--text-muted); }
+
+        .rotating-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .card-header-info {
+            margin-bottom: 24px;
+        }
+
+        .card-header-info label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .hospital-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .blood-badge-absolute {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            border: 2px solid var(--primary);
+        }
+
+        .requirement-box {
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .req-units {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .req-time {
+            font-size: 13px;
+            color: var(--primary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .blood-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .blood-type-node {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+
+        .blood-type-node.active-node {
+            background: var(--text-dark);
+            color: white;
+            border-color: var(--text-dark);
+        }
+
+        .notified-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .avatar-group { display: flex; }
+        .avatar-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #E07A5F;
+            border: 2px solid white;
+            margin-right: -8px;
+        }
+        .avatar-circle:nth-child(2) { background: #3D5A80; }
+        .avatar-circle:nth-child(3) { background: #98C1D9; }
+        .avatar-circle:nth-child(4) { background: #EE6C4D; }
+
+        .notified-count {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* --- SCREEN 2: MATCHED DONOR PAGE --- */
+        .matched-layout { max-width: 680px; margin: 0 auto; }
+        .matched-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .match-meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .matched-title h3 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+        .matched-title p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+        
+        .badge-req-status {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            background: #E07A5F;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .profile-details h4 { font-size: 22px; font-weight: 700; }
+        .rating-row { display: flex; align-items: center; gap: 6px; font-size: 14px; margin-top: 4px; font-weight: 600; }
+        .rating-row span { color: #FFB020; }
+        
+        .blood-group-indicator {
+            position: absolute;
+            right: 0;
+            width: 54px;
+            height: 54px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-node { background: var(--bg-light); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); text-align: center; }
+        .stat-node h5 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+        .stat-node p { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+
+        .alert-banner-ai {
+            background-color: var(--green-light);
+            border: 1px solid rgba(46, 125, 50, 0.15);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            color: var(--green-success);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .alert-banner-ai .verified-tag { background: rgba(46, 125, 50, 0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        
+        .languages-strip { border: 1px solid var(--border-color); padding: 16px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px; font-size: 14px; margin-bottom: 32px; }
+        .lang-tag { background: var(--bg-light); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border-color); }
+
+        .action-communication-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .btn-call { background: var(--bg-white); border: 1px solid var(--text-dark); padding: 16px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+        .btn-directions { background: var(--primary-light); border: none; color: var(--primary); padding: 16px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+
+        .voice-alert-box { background: var(--bg-light); border: 1px dashed var(--border-color); border-radius: var(--radius-lg); padding: 24px; }
+        .voice-alert-box label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 12px; }
+        .voice-buttons-flex { display: flex; gap: 12px; }
+        .btn-voice-trigger { flex: 1; background: var(--bg-white); border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius-md); display: flex; justify-content: space-between; cursor: pointer; font-weight: 600; }
+
+        .other-matches-section { margin-top: 32px; }
+        .other-matches-section h4 { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+        .other-matches-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
+        .mini-match-card {
+            background: var(--bg-white); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: var(--transition);
+        }
+        .mini-match-card:hover { border-color: var(--text-dark); transform: translateY(-2px); }
+        .mini-info { display: flex; align-items: center; gap: 12px; }
+        .mini-avatar { width: 36px; height: 36px; border-radius: 8px; background: #3D5A80; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .mini-details h5 { font-size: 14px; font-weight: 700; }
+        .mini-details p { font-size: 12px; color: var(--text-muted); }
+        .mini-blood { width: 32px; height: 32px; background: var(--bg-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+
+        /* --- SCREEN 3: REGISTRATION --- */
+        .form-layout-centered { max-width: 540px; margin: 0 auto; }
+        .form-card { background: var(--bg-white); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .form-card h3 { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 8px; }
+        .form-card > p { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+        
+        .input-group { margin-bottom: 24px; position: relative; }
+        .input-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        .input-control { width: 100%; background: var(--bg-white); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: var(--radius-sm); font-size: 15px; outline: none; }
+        .mic-accessory-btn { position: absolute; right: 12px; bottom: 10px; width: 36px; height: 36px; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-submit-form { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+
+        /* --- SCREEN 4: SIGN IN --- */
+        .auth-wrapper { max-width: 540px; margin: 40px auto; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .auth-gradient-header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); padding: 40px; color: white; }
+        .auth-gradient-header .live-emergency-badge { display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 16px; }
+        .auth-gradient-header h3 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+        .auth-gradient-header p { font-size: 14px; opacity: 0.85; }
+        .auth-body { background: var(--bg-white); padding: 40px; }
+        .forgot-link { float: right; font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600; }
+        .auth-divider { text-align: center; margin: 24px 0; position: relative; }
+        .auth-divider::before { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--border-color); z-index: 1; }
+        .auth-divider span { background: var(--bg-white); padding: 0 16px; font-size: 12px; color: var(--text-muted); position: relative; z-index: 2; }
+        .btn-google-auth { width: 100%; background: var(--bg-white); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .toggle-auth-state { text-align: center; margin-top: 28px; font-size: 14px; color: var(--text-muted); }
+        .toggle-auth-state a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .footer-compliance-text { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 24px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area" onclick="switchScreen('home-screen', 'nav-home')">
+            <div class="logo-icon">🩸</div>
+            <div class="logo-text">
+                <h1>LifeSync</h1>
+                <span>AI · HYDERABAD</span>
+            </div>
+        </div>
+        <nav>
+            <a href="#" id="nav-home" class="active" onclick="switchScreen('home-screen', 'nav-home')">Home</a>
+            <a href="#" id="nav-match" onclick="switchScreen('match-screen', 'nav-match')">Find Donor</a>
+            <a href="#" id="nav-register" onclick="switchScreen('register-screen', 'nav-register')">Become a Donor</a>
+            <a href="#" id="nav-signin" onclick="switchScreen('signin-screen', 'nav-signin')">Sign In</a>
+        </nav>
+        <div class="nav-actions">
+            <button class="theme-toggle">🌙</button>
+            <button class="btn-emergency" onclick="switchScreen('match-screen', 'nav-match')">Emergency</button>
+        </div>
+    </header>
+
+    <div class="screen-container">
+
+        <section id="home-screen" class="app-screen active-screen">
+            <div class="hero-layout">
+                <div class="hero-left">
+                    <div class="live-tag">Active across Hyderabad Core Channels</div>
+                    <h2>Every second counts.<br>Sync with <span>live donors.</span></h2>
+                    <p>Welcome to LifeSync. We track real-time emergency cases across premier Hyderabad hospital networks to close critical blood supply loops automatically.</p>
+                    <div class="cta-group">
+                        <button class="btn-main-req" onclick="switchScreen('match-screen', 'nav-match')">Emergency Request Loop &rarr;</button>
+                        <button class="btn-main-donor" onclick="switchScreen('register-screen', 'nav-register')">Become a Donor</button>
+                    </div>
+                </div>
+                
+                <div class="hero-right">
+                    <div class="rotating-card">
+                        <div class="blood-badge-absolute" id="dynamic-blood-badge">O-</div>
+                        <div class="card-header-info">
+                            <label>Live Synchronized Case</label>
+                            <div class="hospital-name" id="dynamic-hospital">NIMS Hospital, Panjagutta</div>
+                        </div>
+                        
+                        <div class="requirement-box">
+                            <label style="color: var(--primary); font-size:12px; font-weight:700; text-transform:uppercase;">Urgency Indicator</label>
+                            <div class="req-units" id="dynamic-units">3 Units</div>
+                            <div class="req-time" id="dynamic-time">Surgery scheduled in 2 hours</div>
+                        </div>
+
+                        <div class="blood-selector-grid">
+                            <div class="blood-type-node" id="node-A_pos">A+</div>
+                            <div class="blood-type-node" id="node-A_neg">A-</div>
+                            <div class="blood-type-node" id="node-B_pos">B+</div>
+                            <div class="blood-type-node" id="node-B_neg">B-</div>
+                            <div class="blood-type-node" id="node-AB_pos">AB+</div>
+                            <div class="blood-type-node" id="node-AB_neg">AB-</div>
+                            <div class="blood-type-node" id="node-O_pos">O+</div>
+                            <div class="blood-type-node" id="node-O_neg">O-</div>
+                        </div>
+
+                        <div class="notified-row">
+                            <div class="avatar-group">
+                                <div class="avatar-circle"></div>
+                                <div class="avatar-circle"></div>
+                                <div class="avatar-circle"></div>
+                                <div class="avatar-circle"></div>
+                            </div>
+                            <div class="notified-count"><span id="dynamic-notified-count">12</span> matching donors flagged</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="match-screen" class="app-screen">
+            <div class="matched-layout">
+                <div class="matched-card">
+                    <div class="match-meta-header">
+                        <div class="matched-title">
+                            <div class="live-tag" style="margin-bottom: 8px;">LifeSync Active Loop</div>
+                            <h3>Donor matched.</h3>
+                            <p>3 verified registry matches located close to coordinates.</p>
+                        </div>
+
+                        <div class="badge-req-status">
+                            <label style="font-size:10px; font-weight:700; text-transform:uppercase; display:block; opacity:0.7; color: var(--primary);">Request</label>
+                            <strong style="font-size:15px; font-weight:800; color: var(--primary);">O-negative · 2 Units</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-container">
+                        <div class="profile-avatar">RK</div>
+                        <div class="profile-details">
+                            <h4 id="main-donor-name">Rajesh Kumar</h4>
+                            <div class="rating-row">
+                                <span>★</span> 4.9 <label>· 12 donations</label>
+                            </div>
+                        </div>
+                        <div class="blood-group-indicator">O-</div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-node">
+                            <h5 id="match-distance">2.3 km</h5>
+                            <p>Distance</p>
+                        </div>
+                        <div class="stat-node">
+                            <h5 id="match-eta">~12 min</h5>
+                            <p>Calculated ETA</p>
+                        </div>
+                        <div class="stat-node">
+                            <h5 id="match-location">Banjara Hills</h5>
+                            <p>Zone Area</p>
+                        </div>
+                    </div>
+
+                    <div class="alert-banner-ai">
+                        <div>
+                            <strong>Sarvam AI Automated Alert Layer</strong>
+                            <span style="display:block; font-size:12px; opacity:0.9; margin-top:2px;">Dispatched instant voice call match notifications in Telugu</span>
+                        </div>
+                        <div class="verified-tag">LIVE</div>
+                    </div>
+
+                    <div class="languages-strip">
+                        <span style="font-weight:700; color:var(--text-muted)">Speaks:</span>
+                        <div class="lang-tag">Telugu</div>
+                        <div class="lang-tag">Hindi</div>
+                        <div class="lang-tag">English</div>
+                    </div>
+
+                    <div class="action-communication-grid">
+                        <button class="btn-call" onclick="alert('Connecting via secure virtual proxy gateway...')">📞 Call Donor</button>
+                        <button class="btn-directions" onclick="alert('Pulling routing coordinate coordinates...')">➔ Get Directions</button>
+                    </div>
+
+                    <div class="voice-alert-box">
+                        <label>Send Voice Alert <span style="font-weight:400; color:var(--text-muted);">(Plays an automated tracking prompt)</span></label>
+                        <div class="voice-buttons-flex" style="flex-wrap:wrap; gap:10px;">
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('English')">🔊 English</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Telugu')">🔊 Telugu</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Hindi')">🔊 Hindi</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Tamil')">🔊 Tamil</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Kannada')">🔊 Kannada</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Bengali')">🔊 Bengali</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Marathi')">🔊 Marathi</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Malayalam')">🔊 Malayalam</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Gujarati')">🔊 Gujarati</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Punjabi')">🔊 Punjabi</button>
+    <button class="btn-voice-trigger" onclick="sendVoiceAlert('Odia')">🔊 Odia</button>
+</div>
+                    </div>
+                </div>
+
+                <div class="other-matches-section">
+                    <h4>Available Queue Backups</h4>
+                    <div class="other-matches-grid">
+                        <div class="mini-match-card" onclick="loadDonor('Sneha Reddy', '3.1 km', 'Panjagutta')">
+                            <div class="mini-info">
+                                <div class="mini-avatar">SR</div>
+                                <div class="mini-details">
+                                    <h5>Sneha Reddy</h5>
+                                    <p>3.1 km away</p>
+                                </div>
+                            </div>
+                            <div class="mini-blood">O-</div>
+                        </div>
+                        <div class="mini-match-card" onclick="loadDonor('Vikram Singh', '4.7 km', 'Secunderabad')">
+                            <div class="mini-info">
+                                <div class="mini-avatar">VS</div>
+                                <div class="mini-details">
+                                    <h5>Vikram Singh</h5>
+                                    <p>4.7 km away</p>
+                                </div>
+                            </div>
+                            <div class="mini-blood">O-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="register-screen" class="app-screen">
+            <div class="form-layout-centered">
+                <div class="form-card">
+                    <label style="color:var(--primary); font-size:12px; font-weight:700; text-transform:uppercase; display:block; margin-bottom:8px;">Database Onboarding</label>
+                    <h3>Join LifeSync.</h3>
+                    <p>Takes less than a minute. Tap the mic icon to voice-fill properties inside your browser.</p>
+                    
+                    <form onsubmit="handleRegistration(event)">
+                        <div class="input-group">
+                            <label>Donor Full Name</label>
+                            <input type="text" class="input-control" placeholder="Priya Reddy" required>
+                            <button type="button" class="mic-accessory-btn" onclick="alert('Microphone pipeline listening for Name value...')">🎤</button>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Blood Group Type</label>
+                            <select class="input-control" required>
+                                <option value="" disabled selected>Select blood matrix channel</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Target City Location</label>
+                            <input type="text" class="input-control" value="Hyderabad" required>
+                            <button type="button" class="mic-accessory-btn" onclick="alert('Microphone pipeline listening for Location value...')">🎤</button>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Active Contact Number</label>
+                            <input type="tel" class="input-control" placeholder="+91 98765 43210" required>
+                            <button type="button" class="mic-accessory-btn" onclick="alert('Microphone pipeline listening for Contact value...')">🎤</button>
+                        </div>
+
+                        <button type="submit" class="btn-submit-form">Commit Donor Record ➔</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="signin-screen" class="app-screen">
+            <div class="auth-wrapper">
+                <div class="auth-gradient-header">
+                    <div class="live-emergency-badge">● Live Sync Console · Hyd</div>
+                    <h3>Secure Operator Portal</h3>
+                    <p>Authenticate parameters to oversee active donor tracking queues directly across Hyderabad telemetry data loops.</p>
+                </div>
+                <div class="auth-body">
+                    <form onsubmit="handleSignIn(event)">
+                        <div class="input-group">
+                            <label>Phone Track ID</label>
+                            <input type="tel" class="input-control" value="+91 98765 43210" required>
+                        </div>
+
+                        <div class="input-group">
+                            <a href="#" class="forgot-link">Recover code?</a>
+                            <label>Access Code Vector</label>
+                            <input type="password" class="input-control" value="••••••••" required>
+                        </div>
+
+                        <button type="submit" class="btn-submit-form">Authorize Access Node ➔</button>
+
+                        <div class="auth-divider">
+                            <span>OR</span>
+                        </div>
+
+                        <button type="button" class="btn-google-auth" onclick="alert('Federated Google security handshakes invoked...')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                            </svg>
+                            Continue with Google OAuth
+                        </button>
+
+                        <div class="toggle-auth-state">
+                            New tracker to the cluster? <a href="#" onclick="switchScreen('register-screen', 'nav-register')">Onboard record</a>
+                        </div>
+                    </form>
+                    
+                    <div class="footer-compliance-text">
+                        Enforced end-to-end sandbox layer · Compliant with local clinical data provisions
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        /* --- LOCAL HYDERABAD DATA STORAGE ARRAYS --- */
+        const hyderabadRequests = [
+            { hospital: "NIMS, Panjagutta", bloodGroup: "O-", units: "3 Units", time: "Surgery scheduled in 2 hours", nodes: "node-O_neg", count: 12 },
+            { hospital: "Gandhi Hospital, Secunderabad", bloodGroup: "A+", units: "5 Units", time: "Critical trauma emergency", nodes: "node-A_pos", count: 19 },
+            { hospital: "Apollo Hospitals, Jubilee Hills", bloodGroup: "B-", units: "2 Units", time: "Thalassemia transfusion setup", nodes: "node-B_neg", count: 8 },
+            { hospital: "Yashoda Hospitals, Malakpet", bloodGroup: "AB-", units: "4 Units", time: "Emergency cardiac procedure", nodes: "node-AB_neg", count: 5 },
+            { hospital: "Continental Hospitals, Gachibowli", bloodGroup: "O+", units: "6 Units", time: "Urgent postpartum hemorrhage case", nodes: "node-O_pos", count: 32 },
+            { hospital: "AIIMS, Bibinagar (Hyd)", bloodGroup: "A-", units: "3 Units", time: "Accident wing rapid request", nodes: "node-A_neg", count: 14 }
+        ];
+
+        let currentRequestIndex = 0;
+
+        /* --- AUTOMATIC 5-SECOND SLIDER LOOPS --- */
+        function rotateBloodRequests() {
+            currentRequestIndex = (currentRequestIndex + 1) % hyderabadRequests.length;
+            const data = hyderabadRequests[currentRequestIndex];
+
+            // Render updated text nodes safely
+            document.getElementById('dynamic-hospital').innerText = data.hospital;
+            document.getElementById('dynamic-blood-badge').innerText = data.bloodGroup;
+            document.getElementById('dynamic-units').innerText = data.units;
+            document.getElementById('dynamic-time').innerText = data.time;
+            document.getElementById('dynamic-notified-count').innerText = data.count;
+
+            // Clear node class matrix lists
+            document.querySelectorAll('.blood-type-node').forEach(node => {
+                node.classList.remove('active-node');
+            });
+
+            // Highlight newly scheduled active element
+            const targetedNode = document.getElementById(data.nodes);
+            if (targetedNode) {
+                targetedNode.classList.add('active-node');
+            }
+        }
+
+        // Initialize internal chronometer loop
+        setInterval(rotateBloodRequests, 5000);
+        
+        // Ensure accurate structural highlighting configurations upon bootstrap load
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialData = hyderabadRequests[0];
+            document.getElementById(initialData.nodes).classList.add('active-node');
+        });
+
+        /* --- APPLICATION NAV ROUTER --- */
+        function switchScreen(screenId, navId) {
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active-screen');
+            });
+            document.getElementById(screenId).classList.add('active-screen');
+
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            if(navId) {
+                document.getElementById(navId).classList.add('active');
+            }
+        }
+
+        /* --- DACTIVE MUTATION ENGINES FOR MATCHED MONITORING VIEW --- */
+        function loadDonor(name, distance, area) {
+            document.querySelector('.profile-avatar').innerText = name.split(' ').map(n => n[0]).join('');
+            document.getElementById('main-donor-name').innerText = name;
+            document.getElementById('match-distance').innerText = distance;
+            document.getElementById('match-location').innerText = area;
+            
+            const simulatedMinutes = Math.floor(Math.random() * 15) + 5;
+            document.getElementById('match-eta').innerText = `~${simulatedMinutes} min`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* --- USER ACTION HANDLERS --- */
+        function handleRegistration(e) {
+            e.preventDefault();
+            alert('Success! Registration processed cleanly. Committed record entries into the local Hyderabad cluster matrix.');
+            switchScreen('home-screen', 'nav-home');
+        }
+
+        function handleSignIn(e) {
+            e.preventDefault();
+            alert('Authorization Accepted! Welcome back to the main LifeSync orchestration grid.');
+            switchScreen('home-screen', 'nav-home');
+        }
+        async function sendVoiceAlert(language) {
+    const audio = new Audio(`/static/alert_${language.toLowerCase()}.wav`);
+    audio.play();
+    alert(`✅ Voice alert sent in ${language}!`);
+}
+            
+       </script>
+       </body>
+    </html>

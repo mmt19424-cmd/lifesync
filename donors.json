@@ -1,0 +1,10 @@
+[
+  {"id":1,"name":"Rajesh Kumar","blood_type":"O-","area":"Banjara Hills","phone":"9876543210","language":"Telugu","available":true},
+  {"id":2,"name":"Fatima Begum","blood_type":"A+","area":"Jubilee Hills","phone":"9876543211","language":"Urdu","available":true},
+  {"id":3,"name":"Suresh Reddy","blood_type":"B+","area":"Madhapur","phone":"9876543212","language":"Telugu","available":true},
+  {"id":4,"name":"Priya Sharma","blood_type":"AB+","area":"Kondapur","phone":"9876543213","language":"Hindi","available":true},
+  {"id":5,"name":"Mohammed Ali","blood_type":"O+","area":"Himayatnagar","phone":"9876543214","language":"Urdu","available":true},
+  {"id":6,"name":"Lakshmi Devi","blood_type":"A-","area":"Secunderabad","phone":"9876543215","language":"Telugu","available":true},
+  {"id":7,"name":"Arjun Singh","blood_type":"B-","area":"Kukatpally","phone":"9876543216","language":"Hindi","available":true},
+  {"id":8,"name":"Zainab Khan","blood_type":"AB-","area":"Tolichowki","phone":"9876543217","language":"Urdu","available":true}
+]
